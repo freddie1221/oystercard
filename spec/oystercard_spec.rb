@@ -36,16 +36,24 @@ describe Oystercard do
 
   describe "#touch_in" do 
     it "should change #in_journey to true" do 
+      subject.top_up(Oystercard::MINIMUM_FARE)
       subject.touch_in
       expect(subject.in_journey?).to eq true
     end
+    it "should raise an error if insufficient funds (minumum fare - 1)" do
+      subject.top_up(Oystercard::MINIMUM_FARE - 1)
+      expect { subject.touch_in }.to raise_error("Insufficient funds, you have #{subject.balance} on your card")
+    end
   end
+  
 
   describe "#touch_out" do
     it "should change #in_journey to false" do 
+      subject.top_up(1)
       subject.touch_in
       subject.touch_out
       expect(subject.in_journey?).to eq false
     end
   end
+
 end
