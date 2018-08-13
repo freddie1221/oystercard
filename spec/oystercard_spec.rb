@@ -1,7 +1,10 @@
 require 'oystercard'
 
 describe Oystercard do 
-  describe "#balnce" do
+
+  let(:cardWithBalance100) { double :oystercard, :balance => 100}
+
+  describe "#balance" do
     it "returns the balance on the .oystercard" do
       expect(subject.balance).to eq 0
     end
@@ -20,13 +23,7 @@ describe Oystercard do
 
   end
 
-  describe "#deduct" do
-    it "should deduct from the balance amount" do 
-      subject.top_up(20)
-      subject.deduct(5)
-      expect(subject.balance).to eq 15
-    end
-  end
+ 
 
   describe "#in_journey?" do
     it "should return false" do 
@@ -37,23 +34,36 @@ describe Oystercard do
   describe "#touch_in" do 
     it "should change #in_journey to true" do 
       subject.top_up(Oystercard::MINIMUM_FARE)
-      subject.touch_in
+      subject.touch_in("Aldgate East")
       expect(subject.in_journey?).to eq true
     end
     it "should raise an error if insufficient funds (minumum fare - 1)" do
       subject.top_up(Oystercard::MINIMUM_FARE - 1)
-      expect { subject.touch_in }.to raise_error("Insufficient funds, you have #{subject.balance} on your card")
+      expect { subject.touch_in("Aldgate East") }.to raise_error("Insufficient funds, you have #{subject.balance} on your card")
+    end
+    it "should set entry station when it is touched_in" do
+      subject.top_up(Oystercard::MINIMUM_FARE)
+      subject.touch_in("Aldgate East")
+      expect(subject.entry_station).to eq "Aldgate East"
     end
   end
   
 
   describe "#touch_out" do
-    it "should change #in_journey to false" do 
+    
+    
+    it "should change #in_journey to false" do
       subject.top_up(1)
-      subject.touch_in
+      subject.touch_in("Aldgate East")
       subject.touch_out
       expect(subject.in_journey?).to eq false
     end
+    it "should reduce the balance by the MINIMUM FARE" do
+      subject.top_up(10)
+      subject.touch_in("Aldgate East")
+      expect { subject.touch_out}.to change{subject.balance}.by(-Oystercard::MINIMUM_FARE)
+    end
+
   end
 
 end
