@@ -3,6 +3,7 @@ require 'oystercard'
 describe Oystercard do 
 
   let(:cardWithBalance100) { double :oystercard, :balance => 100}
+  let(:aldgate) { Station.new("Aldgate", 1) }
 
   describe "#balance" do
     it "returns the balance on the .oystercard" do
@@ -49,7 +50,18 @@ describe Oystercard do
       subject.touch_out("Victoria")
       expect(subject.journeys_list[-1][1]).to eq "Victoria"
     end
+    it "Charges penalty if card is already #in_journey" do
+      subject.touch_in(aldgate)
+      expect { subject.touch_in(aldgate) }.to output("Penalty fare applied!").to_stdout
+    end
+
   end
+
+
+
+
+
+  
 
   describe "#touch_out" do
     before(:each) do
@@ -59,6 +71,10 @@ describe Oystercard do
 
     it "should reduce the balance by the MINIMUM FARE" do
       expect { subject.touch_out("Victoria")}.to change{subject.balance}.by(-Oystercard::MINIMUM_FARE)
+    end
+    it "Charges penalty if card is not #in_journey" do
+      subject.touch_out(aldgate)
+      expect { subject.touch_out(aldgate) }.to output("Penalty fare applied!").to_stdout
     end
   end
 
