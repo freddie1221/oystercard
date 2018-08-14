@@ -74,7 +74,19 @@ describe Oystercard do
       subject.touch_out("Victoria")
     end
     it "should return the most recent journey" do
-      expect(subject.journey.to_a.flatten.join(": ")).to eq "Entry station: Aldgate East: Exit station: Victoria"
+      expect(subject.journeys_list[-1].join(", ")).to eq "Aldgate East, Victoria"
+    end
+  end
+
+  describe "#journeys_list" do
+    it "returns a list of all journeys" do
+      subject.top_up(10)
+      subject.touch_in("Aldgate East")
+      subject.touch_out("Victoria")
+      subject.touch_in("Picadilly")
+      subject.touch_out("Green Park")
+      expect(subject.journeys_list.flatten.join(", ")).to eq "Aldgate East, Victoria, Picadilly, Green Park"
+
     end
   end
 end
