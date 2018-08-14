@@ -24,13 +24,12 @@ class Oystercard
   end
 
   def touch_in(station)
-    fail "Insufficient funds, you have #{self.balance} on your card" if @balance < MINIMUM_FARE
+    fail "Insufficient funds, you have #{@balance} on your card" if @balance < MINIMUM_FARE
     @entry_station = station
   end
 
   def touch_out(station)
     deduct(MINIMUM_FARE)
-    @entry_station = nil
     @exit_station = station
     complete_journey
   end
@@ -40,6 +39,12 @@ class Oystercard
   def complete_journey
     @journey["Entry station"] = @entry_station
     @journey["Exit station"] = @exit_station
+    #clear_journeys
+  end
+
+  def clear_journeys
+    @entry_station = nil
+    @exit_station = nil
   end
 
 

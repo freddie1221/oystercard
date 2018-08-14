@@ -56,11 +56,12 @@ describe Oystercard do
       subject.top_up(Oystercard::MINIMUM_FARE)
       subject.touch_in("Aldgate East")
     end
-   # removing this for now. Will find a better way to test #in_journey
+    #removing this for now. Will find a better way to test #in_journey
     # it "should change #in_journey to false" do
     #   subject.touch_out("Victoria")
     #   expect(subject.in_journey?).to eq false
     # end
+
     it "should reduce the balance by the MINIMUM FARE" do
       expect { subject.touch_out("Victoria")}.to change{subject.balance}.by(-Oystercard::MINIMUM_FARE)
     end
@@ -73,7 +74,7 @@ describe Oystercard do
       subject.touch_out("Victoria")
     end
     it "should return the most recent journey" do
-      expect(subject.journey).to eq "Start station: Aldgate East; End station: Victoria"
+      expect(subject.journey.to_a.flatten.join(": ")).to eq "Entry station: Aldgate East: Exit station: Victoria"
     end
   end
 end
