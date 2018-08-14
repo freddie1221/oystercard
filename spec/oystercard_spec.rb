@@ -22,9 +22,9 @@ describe Oystercard do
     end
   end
 
-  describe "#in_journey?" do
+  describe "#in_journey" do
     it "should return false" do 
-      expect(subject.in_journey?).to eq false
+      expect(subject.in_journey).to eq false
     end
   end
 
@@ -34,7 +34,7 @@ describe Oystercard do
     end
     it "should change #in_journey to true" do 
       subject.touch_in("Aldgate East")
-      expect(subject.in_journey?).to eq true
+      expect(subject.in_journey).to eq true
     end
     it "should raise an error if insufficient funds (minumum fare - 1)" do
       # Overriding the 'before' stuff
@@ -47,7 +47,7 @@ describe Oystercard do
     end
     it "should set exit station when #touch_out is called" do
       subject.touch_out("Victoria")
-      expect(subject.exit_station).to eq "Victoria"
+      expect(subject.journeys_list[-1][1]).to eq "Victoria"
     end
   end
 
@@ -56,18 +56,13 @@ describe Oystercard do
       subject.top_up(Oystercard::MINIMUM_FARE)
       subject.touch_in("Aldgate East")
     end
-    #removing this for now. Will find a better way to test #in_journey
-    # it "should change #in_journey to false" do
-    #   subject.touch_out("Victoria")
-    #   expect(subject.in_journey?).to eq false
-    # end
 
     it "should reduce the balance by the MINIMUM FARE" do
       expect { subject.touch_out("Victoria")}.to change{subject.balance}.by(-Oystercard::MINIMUM_FARE)
     end
   end
 
-  describe "#journey" do
+  describe "#journeys_list" do
     before(:each) do
       subject.top_up(Oystercard::MINIMUM_FARE)
       subject.touch_in("Aldgate East")
